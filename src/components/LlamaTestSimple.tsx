@@ -75,6 +75,7 @@ export function LlamaTestSimple(props: LlamaTestSimpleProps) {
                 process: processId,
             });
             const tags = Messages?.[0]?.Tags;
+            console.log('response tags: ', tags);
             const res = tags?.find(
                 (tag: Tag) => tag.name === 'Llama-Response'
             )?.value;
