@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from './Button';
 import { Input } from './Input';
-import { LLAMA_AO_PROCESS_SIMPLE } from '../utils/constants';
+import { LLM_MODELS } from '../utils/constants';
 import { createMessage, Tag, tag } from '../utils/arweaveUtils';
 import { createDataItemSigner } from '@permaweb/aoconnect';
 import { useArweave } from '../hooks/useArweave';
@@ -12,14 +12,14 @@ export interface LlamaTestSimpleProps {
 }
 
 export function LlamaTestSimple(props: LlamaTestSimpleProps) {
-    const { processId = LLAMA_AO_PROCESS_SIMPLE } = props;
+    const { processId = LLM_MODELS.Phi3 } = props;
     const [prompt, setPrompt] = useState('');
     const [numTokens, setNumTokens] = useState('60');
     const [response, setResponse] = useState<string>('');
     const [prompting, setPrompting] = useState(false);
     const [prompted, setPrompted] = useState(false);
     const [running, setRunning] = useState(false);
-    const [selectedCuUrl, setSelectedCuUrl] = useState<CuUrlKey>('Llama');
+    const [selectedCuUrl, setSelectedCuUrl] = useState<CuUrlKey>('Localhost');
     const { ao } = useArweave({ cuUrl: CU_URLS[selectedCuUrl] });
 
     const handlePrompt = async () => {
@@ -29,7 +29,7 @@ export function LlamaTestSimple(props: LlamaTestSimpleProps) {
         setResponse('');
 
         try {
-            console.log('handlePrompt Started', LLAMA_AO_PROCESS_SIMPLE);
+            console.log('handlePrompt Started', processId);
             start = Date.now();
             const response = await ao?.message({
                 ...createMessage(processId, [

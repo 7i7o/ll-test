@@ -1,6 +1,6 @@
 // import { LlamaTest } from '../components/LlamaTest';
 import { LlamaTestSimple } from '../components/LlamaTestSimple';
-import { LLAMA_AO_PROCESS_SIMPLE } from '../utils/constants';
+import { LLM_MODELS } from '../utils/constants';
 
 export interface SidebarItemConfig {
     id: string;
@@ -9,14 +9,24 @@ export interface SidebarItemConfig {
 }
 
 export const sidebarItems: SidebarItemConfig[] = [
-    // {
-    //     id: 'llama',
-    //     title: 'Phi3 Test',
-    //     component: <LlamaTest />,
-    // },
+    {
+        id: 'GPT2XL',
+        title: 'GPT2 XL',
+        component: <LlamaTestSimple processId={LLM_MODELS.GPT2XL} />,
+    },
+    {
+        id: 'phi2',
+        title: 'Phi2',
+        component: <LlamaTestSimple processId={LLM_MODELS.Phi2} />,
+    },
     {
         id: 'llama-simple',
         title: 'Phi3',
-        component: <LlamaTestSimple processId={LLAMA_AO_PROCESS_SIMPLE} />,
+        component: <LlamaTestSimple processId={LLM_MODELS.Phi3} />,
     },
+    // {
+    //     id: 'codeqwen',
+    //     title: 'CodeQwen',
+    //     component: <LlamaTestSimple processId={LLM_MODELS.CodeQwen} />,
+    // },
 ];
