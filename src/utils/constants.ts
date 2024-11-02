@@ -7,7 +7,7 @@ export const LLAMA_AO_PROCESS_SIMPLE =
 export const CU_URLS = {
     Llama: 'http://96.30.193.102:6363',
     Localhost: 'http://localhost:6363',
-    Default: undefined,
+    // Default: undefined,
 } as const;
 
 export type CuUrlKey = keyof typeof CU_URLS;

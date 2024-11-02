@@ -8,7 +8,7 @@ export function SidebarHeader() {
                 <img
                     src={theme === 'dark' ? '/ll.dark.svg' : '/ll.light.svg'}
                     alt="AWK"
-                    className="mr-1 h-6"
+                    className="mr-1 h-10"
                 />
                 Test
             </h1>

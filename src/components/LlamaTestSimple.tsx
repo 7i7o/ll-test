@@ -7,14 +7,19 @@ import { createDataItemSigner } from '@permaweb/aoconnect';
 import { useArweave } from '../hooks/useArweave';
 import { CU_URLS, type CuUrlKey } from '../utils/constants';
 
-export function LlamaTestSimple() {
+export interface LlamaTestSimpleProps {
+    processId?: string;
+}
+
+export function LlamaTestSimple(props: LlamaTestSimpleProps) {
+    const { processId = LLAMA_AO_PROCESS_SIMPLE } = props;
     const [prompt, setPrompt] = useState('');
     const [numTokens, setNumTokens] = useState('10');
     const [response, setResponse] = useState<string>('');
     const [prompting, setPrompting] = useState(false);
     const [prompted, setPrompted] = useState(false);
     const [running, setRunning] = useState(false);
-    const [selectedCuUrl, setSelectedCuUrl] = useState<CuUrlKey>('Localhost');
+    const [selectedCuUrl, setSelectedCuUrl] = useState<CuUrlKey>('Llama');
     const { ao } = useArweave({ cuUrl: CU_URLS[selectedCuUrl] });
 
     const handlePrompt = async () => {
@@ -27,7 +32,7 @@ export function LlamaTestSimple() {
             console.log('handlePrompt Started', LLAMA_AO_PROCESS_SIMPLE);
             start = Date.now();
             const response = await ao?.message({
-                ...createMessage(LLAMA_AO_PROCESS_SIMPLE, [
+                ...createMessage(processId, [
                     tag('Action', 'Prompt'),
                     tag('Prompt', prompt),
                 ]),
@@ -35,7 +40,7 @@ export function LlamaTestSimple() {
             });
             const { Messages } = await ao?.result({
                 message: response,
-                process: LLAMA_AO_PROCESS_SIMPLE,
+                process: processId,
             });
             end = Date.now();
             setPrompted(true);
@@ -58,7 +63,7 @@ export function LlamaTestSimple() {
             const tokens = parseInt(numTokens);
             start = Date.now();
             const response = await ao?.message({
-                ...createMessage(LLAMA_AO_PROCESS_SIMPLE, [
+                ...createMessage(processId, [
                     tag('Action', 'Run'),
                     tag('Max-Tokens', tokens.toString()),
                 ]),
@@ -67,7 +72,7 @@ export function LlamaTestSimple() {
             console.log('response', response);
             const { Messages } = await ao?.result({
                 message: response,
-                process: LLAMA_AO_PROCESS_SIMPLE,
+                process: processId,
             });
             const tags = Messages?.[0]?.Tags;
             const res = tags?.find(
@@ -89,25 +94,6 @@ export function LlamaTestSimple() {
 
     return (
         <div className="flex w-full flex-col gap-4">
-            {/* CU_URL Selection */}
-            <div className="flex items-center gap-4">
-                <label className="text-sm font-medium">AO Compute Unit:</label>
-                <div className="flex gap-4">
-                    {(Object.keys(CU_URLS) as CuUrlKey[]).map((urlKey) => (
-                        <label key={urlKey} className="flex items-center gap-2">
-                            <input
-                                type="radio"
-                                name="cuUrl"
-                                checked={selectedCuUrl === urlKey}
-                                onChange={() => setSelectedCuUrl(urlKey)}
-                                className="text-blue-600 focus:ring-blue-500"
-                            />
-                            <span className="text-sm">{urlKey}</span>
-                        </label>
-                    ))}
-                </div>
-            </div>
-
             <div className="flex items-end gap-4">
                 <div className="flex-1">
                     <Input
@@ -163,6 +149,25 @@ export function LlamaTestSimple() {
                               : 'Response will appear here'}
                     </div>
                 )}
+            </div>
+
+            {/* CU_URL Selection */}
+            <div className="flex items-center gap-4">
+                <label className="text-sm font-medium">AO Compute Unit:</label>
+                <div className="flex gap-4">
+                    {(Object.keys(CU_URLS) as CuUrlKey[]).map((urlKey) => (
+                        <label key={urlKey} className="flex items-center gap-2">
+                            <input
+                                type="radio"
+                                name="cuUrl"
+                                checked={selectedCuUrl === urlKey}
+                                onChange={() => setSelectedCuUrl(urlKey)}
+                                className="text-blue-600 focus:ring-blue-500"
+                            />
+                            <span className="text-sm">{urlKey}</span>
+                        </label>
+                    ))}
+                </div>
             </div>
         </div>
     );

@@ -1,5 +1,6 @@
-import { LlamaTest } from '../components/LlamaTest';
+// import { LlamaTest } from '../components/LlamaTest';
 import { LlamaTestSimple } from '../components/LlamaTestSimple';
+import { LLAMA_AO_PROCESS_SIMPLE } from '../utils/constants';
 
 export interface SidebarItemConfig {
     id: string;
@@ -8,14 +9,14 @@ export interface SidebarItemConfig {
 }
 
 export const sidebarItems: SidebarItemConfig[] = [
-    {
-        id: 'llama',
-        title: 'Phi3 Test',
-        component: <LlamaTest />,
-    },
+    // {
+    //     id: 'llama',
+    //     title: 'Phi3 Test',
+    //     component: <LlamaTest />,
+    // },
     {
         id: 'llama-simple',
-        title: 'Phi3 Simple Test',
-        component: <LlamaTestSimple />,
+        title: 'Phi3',
+        component: <LlamaTestSimple processId={LLAMA_AO_PROCESS_SIMPLE} />,
     },
 ];

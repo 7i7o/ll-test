@@ -1,5 +1,5 @@
-import { SidebarItem } from "./SidebarItem";
-import { sidebarItems } from "../../config/sidebarItems";
+import { SidebarItem } from './SidebarItem';
+import { sidebarItems } from '../../config/sidebarItems';
 
 interface SidebarNavigationProps {
     connected: boolean;
@@ -7,12 +7,17 @@ interface SidebarNavigationProps {
     onItemClick: (itemId: string) => void;
 }
 
-export function SidebarNavigation({ connected, selectedItem, onItemClick }: SidebarNavigationProps) {
+export function SidebarNavigation({
+    connected,
+    selectedItem,
+    onItemClick,
+}: SidebarNavigationProps) {
     return (
         <nav className="flex-1 space-y-1 p-4">
             {connected && (
                 <>
                     <div className="space-y-1">
+                        <h2 className="text-xl font-semibold">Model</h2>
                         {sidebarItems.map((item) => (
                             <SidebarItem
                                 key={item.id}
@@ -26,4 +31,4 @@ export function SidebarNavigation({ connected, selectedItem, onItemClick }: Side
             )}
         </nav>
     );
-} 
+}

@@ -14,7 +14,7 @@ export function LlamaTest() {
     const [prompting, setPrompting] = useState(false);
     const [prompted, setPrompted] = useState(false);
     const [running, setRunning] = useState(false);
-    const [selectedCuUrl, setSelectedCuUrl] = useState<CuUrlKey>('Localhost');
+    const [selectedCuUrl, setSelectedCuUrl] = useState<CuUrlKey>('Llama');
     const { ao } = useArweave({ cuUrl: CU_URLS[selectedCuUrl] });
 
     const handlePrompt = async () => {
