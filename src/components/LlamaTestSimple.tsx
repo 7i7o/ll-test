@@ -14,7 +14,7 @@ export interface LlamaTestSimpleProps {
 export function LlamaTestSimple(props: LlamaTestSimpleProps) {
     const { processId = LLAMA_AO_PROCESS_SIMPLE } = props;
     const [prompt, setPrompt] = useState('');
-    const [numTokens, setNumTokens] = useState('10');
+    const [numTokens, setNumTokens] = useState('60');
     const [response, setResponse] = useState<string>('');
     const [prompting, setPrompting] = useState(false);
     const [prompted, setPrompted] = useState(false);
