@@ -14,18 +14,3 @@ export default defineConfig({
         }),
     ],
 });
-
-/// <reference types="vite/client" />
-
-interface ImportMetaEnv {
-    readonly VITE_PHI2_PROCESS_ID: string;
-    readonly VITE_PHI3_PROCESS_ID: string;
-    readonly VITE_GPT2XL_PROCESS_ID: string;
-    readonly VITE_CU_URL_LOCALHOST: string;
-    readonly VITE_CU_URL_LLAMA: string;
-    readonly VITE_CU_URL_DEFAULT: string;
-}
-
-interface ImportMeta {
-    readonly env: ImportMetaEnv;
-}
