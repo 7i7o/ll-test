@@ -25,3 +25,8 @@ dist-ssr
 
 # Manually packed packages
 *.tgz
+
+# Environment variables
+.env
+.env.local
+.env.*.local

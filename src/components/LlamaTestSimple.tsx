@@ -20,13 +20,34 @@ export function LlamaTestSimple(props: LlamaTestSimpleProps) {
     const [prompted, setPrompted] = useState(false);
     const [running, setRunning] = useState(false);
     const [selectedCuUrl, setSelectedCuUrl] = useState<CuUrlKey>('Localhost');
-    const { ao } = useArweave({ cuUrl: CU_URLS[selectedCuUrl] });
+    const [customUrl, setCustomUrl] = useState<string>(
+        CU_URLS[selectedCuUrl as keyof typeof CU_URLS]
+    );
+    const [promptTime, setPromptTime] = useState<number>(0);
+    const [promptedWords, setPromptedWords] = useState<number>(0);
+    const [runTime, setRunTime] = useState<number>(0);
+    const [ranTokens, setRanTokens] = useState<number>(0);
+    const { ao } = useArweave({
+        cuUrl:
+            selectedCuUrl === 'Custom'
+                ? customUrl
+                : CU_URLS[selectedCuUrl as keyof typeof CU_URLS],
+    });
+
+    const handleCuUrlChange = (urlKey: CuUrlKey) => {
+        setSelectedCuUrl(urlKey);
+        if (urlKey !== 'Custom') {
+            setCustomUrl(CU_URLS[urlKey]);
+        }
+    };
 
     const handlePrompt = async () => {
         let start, end;
         if (!prompt || prompting) return;
         setPrompting(true);
         setResponse('');
+        setPromptTime(0);
+        setRunTime(0);
 
         try {
             console.log('handlePrompt Started', processId);
@@ -43,9 +64,12 @@ export function LlamaTestSimple(props: LlamaTestSimpleProps) {
                 process: processId,
             });
             end = Date.now();
+            const timeInSeconds = (end - start) / 1000;
+            setPromptTime(timeInSeconds);
+            setPromptedWords(prompt.trim().split(/\s+/).length);
             setPrompted(true);
             console.log(Messages[0].Tags);
-            console.log('handlePrompt Ended: ', (end - start) / 1000);
+            console.log('handlePrompt Ended: ', timeInSeconds);
         } catch (error) {
             console.error('Error:', error);
         } finally {
@@ -57,6 +81,7 @@ export function LlamaTestSimple(props: LlamaTestSimpleProps) {
         let start, end;
         if (!prompt || prompting) return;
         setRunning(true);
+        setRunTime(0);
 
         try {
             console.log('handleRun Started');
@@ -83,14 +108,41 @@ export function LlamaTestSimple(props: LlamaTestSimpleProps) {
                 setResponse(res);
             }
             end = Date.now();
+            const timeInSeconds = (end - start) / 1000;
+            setRunTime(timeInSeconds);
+            setRanTokens(tokens);
             console.log(
-                `handleRun Ended: ${(end - start) / 1000} -> ${(end - start) / 1000 / tokens}s/token`
+                `handleRun Ended: ${timeInSeconds} -> ${timeInSeconds / tokens}s/token`
             );
         } catch (error) {
             console.error('Error:', error);
         } finally {
             setRunning(false);
         }
+    };
+
+    const TimingInfo = () => {
+        const promptTimePerWord = promptTime / promptedWords;
+        const runTimePerToken = runTime / ranTokens;
+
+        return (
+            <div className="-my-3 flex h-5 items-center justify-between px-3 text-xs italic text-slate-700 dark:text-slate-300">
+                {promptTime > 0 && (
+                    <div>
+                        <span className="font-semibold">Prompt Time:</span>{' '}
+                        {promptTime.toFixed(2)} s -{' '}
+                        {promptTimePerWord.toFixed(3)} s/word
+                    </div>
+                )}
+                {runTime > 0 && (
+                    <div>
+                        <span className="font-semibold">Run Time:</span>{' '}
+                        {runTime.toFixed(2)} s - {runTimePerToken.toFixed(3)}{' '}
+                        s/token
+                    </div>
+                )}
+            </div>
+        );
     };
 
     return (
@@ -152,24 +204,46 @@ export function LlamaTestSimple(props: LlamaTestSimpleProps) {
                 )}
             </div>
 
+            {/* Timing Information */}
+            <TimingInfo />
+
             {/* CU_URL Selection */}
-            <div className="flex items-center gap-4">
-                <label className="text-sm font-medium">AO Compute Unit:</label>
-                <div className="flex gap-4">
-                    {(Object.keys(CU_URLS) as CuUrlKey[]).map((urlKey) => (
-                        <label key={urlKey} className="flex items-center gap-2">
-                            <input
-                                type="radio"
-                                name="cuUrl"
-                                checked={selectedCuUrl === urlKey}
-                                onChange={() => setSelectedCuUrl(urlKey)}
-                                className="text-blue-600 focus:ring-blue-500"
-                            />
-                            <span className="text-sm">{urlKey}</span>
-                        </label>
-                    ))}
+            <details>
+                <summary>
+                    <label className="text-sm font-medium">
+                        AO Compute Unit ({selectedCuUrl})
+                    </label>
+                </summary>
+
+                <div className="flex h-11 items-center gap-4">
+                    <div className="flex gap-4">
+                        {(Object.keys(CU_URLS) as CuUrlKey[]).map((urlKey) => (
+                            <label
+                                key={urlKey}
+                                className="flex items-center gap-2"
+                            >
+                                <input
+                                    type="radio"
+                                    name="cuUrl"
+                                    checked={selectedCuUrl === urlKey}
+                                    onChange={() => handleCuUrlChange(urlKey)}
+                                    className="text-blue-600 focus:ring-blue-500"
+                                />
+                                <span className="text-sm">{urlKey}</span>
+                            </label>
+                        ))}
+                    </div>
+                    {selectedCuUrl === 'Custom' && (
+                        <Input
+                            type="text"
+                            value={customUrl}
+                            onChange={(e) => setCustomUrl(e.target.value)}
+                            placeholder="Enter custom URL"
+                            className="flex-1"
+                        />
+                    )}
                 </div>
-            </div>
+            </details>
         </div>
     );
 }
